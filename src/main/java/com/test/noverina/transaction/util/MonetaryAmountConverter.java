@@ -6,13 +6,9 @@ import jakarta.persistence.Converter;
 import javax.money.Monetary;
 import javax.money.MonetaryAmount;
 import java.math.BigDecimal;
-import java.time.format.DateTimeFormatter;
 
-@Converter(autoApply = true)
+@Converter(autoApply = false)
 public class MonetaryAmountConverter implements AttributeConverter<MonetaryAmount, String> {
-
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssX");
-
     @Override
     public String convertToDatabaseColumn(MonetaryAmount amount) {
         return amount != null ?
@@ -22,8 +18,11 @@ public class MonetaryAmountConverter implements AttributeConverter<MonetaryAmoun
 
     @Override
     public MonetaryAmount convertToEntityAttribute(String dbData) {
-        if (dbData == null) return null;
+        if (dbData == null || !dbData.contains(" ")) return null;
         String[] split = dbData.trim().split(" ");
+        if (split.length != 2) {
+            return null;
+        }
         String code = split[0];
         BigDecimal amount = new BigDecimal(split[1]);
         return Monetary.getDefaultAmountFactory()
