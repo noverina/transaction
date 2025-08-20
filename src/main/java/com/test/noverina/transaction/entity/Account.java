@@ -4,14 +4,16 @@ import com.test.noverina.transaction.annotation.UuidV6;
 import com.test.noverina.transaction.enums.AccountStatus;
 import com.test.noverina.transaction.util.MonetaryAmountConverter;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import javax.money.MonetaryAmount;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class Account extends Auditable {
     @Id
     @UuidV6
