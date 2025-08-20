@@ -1,6 +1,6 @@
 package com.test.noverina.transaction.entity;
 
-import com.test.noverina.transaction.util.ZonedDateTimeConverter;
+import com.test.noverina.transaction.util.InstantConverter;
 import jakarta.persistence.Convert;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
@@ -11,7 +11,7 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
@@ -19,12 +19,12 @@ import java.time.ZonedDateTime;
 public class Auditable {
     @CreatedBy
     protected String createdBy;
-    @Convert(converter = ZonedDateTimeConverter.class)
     @CreatedDate
-    protected ZonedDateTime createdAt;
+    @Convert(converter = InstantConverter.class)
+    protected Instant createdAt;
     @LastModifiedBy
     protected String updatedBy;
-    @Convert(converter = ZonedDateTimeConverter.class)
     @LastModifiedDate
-    protected ZonedDateTime updatedAt;
+    @Convert(converter = InstantConverter.class)
+    protected Instant updatedAt;
 }
