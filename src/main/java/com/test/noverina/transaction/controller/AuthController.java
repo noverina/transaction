@@ -3,6 +3,7 @@ package com.test.noverina.transaction.controller;
 import com.test.noverina.transaction.dto.AuthDto;
 import com.test.noverina.transaction.dto.HttpResponseDto;
 import com.test.noverina.transaction.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ public class AuthController {
     @Autowired
     private AuthService service;
 
+    @Operation(summary = "(for demo/test purpose) generate jwt")
     @PostMapping
     public ResponseEntity<HttpResponseDto<?>> auth(@RequestBody AuthDto dto)  {
         var token = service.auth(dto);

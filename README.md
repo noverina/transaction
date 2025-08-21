@@ -1,3 +1,5 @@
+Swagger can be accessed at (url)/swagger-ui/index.html
+
 # How to run
 Min. Java version 21 is needed 
 
