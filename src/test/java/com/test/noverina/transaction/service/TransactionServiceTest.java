@@ -130,7 +130,7 @@ class TransactionServiceTest {
         var month = OffsetDateTime.now().getMonthValue();
 
         assertThrows(BadLogicException.class, () -> {
-            service.findAll(accountId, year, month, page, pageSize);
+            service.findAll(accountId, month, year, page, pageSize);
         });
     }
 }
