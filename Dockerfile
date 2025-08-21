@@ -61,7 +61,7 @@ RUN mvn dependency:go-offline
 
 # Copy source and filtered resources
 COPY src ./src
-COPY config/application.properties ./src/main/resources/application.properties
+COPY src/main/resources/application.properties ./src/main/resources/application.properties
 
 # Run Maven with filtering enabled
 RUN mvn clean package \
