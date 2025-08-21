@@ -23,6 +23,28 @@ jobs:
           tags: my-app:ci-test
       - name: Run container for smoke test
         run: |
-          docker run -d --name test-app -p 8080:8080 my-app:ci-test
+          docker run -d \
+            -e SPRING_APPLICATION_NAME=transaction \
+            -e SERVER_PORT=8085 \
+            -e SPRING_DATASOURCE_URL=jdbc:sqlite:db.db \
+            -e SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.sqlite.JDBC \
+            -e SPRING_JPA_DATABASE_PLATFORM=org.hibernate.community.dialect.SQLiteDialect \
+            -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+            -e JWT_EXPIRATION=604800 \
+            -e WHITELISTED_CLIENTS=http://localhost:5173,http://localhost:3000 \
+            -e SPRINGDOC_SWAGGER_UI_AUTHORIZATION_BEARER_FORMAT=JWT \
+            -e SPRINGDOC_SWAGGER_UI_REQUEST_REDIRECT_ENABLED=true \
+            -e SPRINGDOC_SWAGGER_UI_PERSIST_AUTHORIZE=true \
+            -e HTTP_CONNECTION_READ_TIMEOUT=5 \
+            -e HTTP_CONNECTION_CONNECT_TIMEOUT=5 \
+            -e SPRING_KAFKA_BOOTSTRAP_SERVERS=localhost:9092 \
+            -e SPRING_KAFKA_CONSUMER_GROUP_ID=transaction-group \
+            -e SPRING_KAFKA_TOPIC_NAME=transaction \
+            -e SPRING_KAFKA_CONSUMER_AUTO_OFFSET_RESET=earliest \
+            -e SPRING_KAFKA_PRODUCER_KEY_SERIALIZER=org.apache.kafka.common.serialization.StringSerializer \
+            -e SPRING_KAFKA_PRODUCER_VALUE_SERIALIZER=org.apache.kafka.common.serialization.StringSerializer \
+            -p 8080:8080 \
+            --name test-app \
+            my-app:ci-test
           sleep 10
           docker ps
