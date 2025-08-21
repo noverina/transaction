@@ -8,34 +8,21 @@ on:
   workflow_dispatch:  #
 
 jobs:
-  test:
+  mock-deploy:
+    name: Simulate Docker build and smoke test
     runs-on: ubuntu-latest
-    env:
-      SPRING_APPLICATION_NAME: transaction
-      SERVER_PORT: 8085
-      SPRING_DATASOURCE_URL: jdbc:sqlite:db.db
-      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.sqlite.JDBC
-      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.community.dialect.SQLiteDialect
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
-      JWT_EXPIRATION: 604800
-      WHITELISTED_CLIENTS: http://localhost:5173,http://localhost:3000
-      SPRINGDOC_SWAGGER_UI_AUTHORIZATION_BEARER_FORMAT: JWT
-      SPRINGDOC_SWAGGER_UI_REQUEST_REDIRECT_ENABLED: true
-      SPRINGDOC_SWAGGER_UI_PERSIST_AUTHORIZE: true
-      HTTP_CONNECTION_READ_TIMEOUT: 5
-      HTTP_CONNECTION_CONNECT_TIMEOUT: 5
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: localhost:9092
-      SPRING_KAFKA_CONSUMER_GROUP_ID: transaction-group
-      SPRING_KAFKA_TOPIC_NAME: transaction
-      SPRING_KAFKA_CONSUMER_AUTO_OFFSET_RESET: earliest
-      SPRING_KAFKA_PRODUCER_KEY_SERIALIZER: org.apache.kafka.common.serialization.StringSerializer
-      SPRING_KAFKA_PRODUCER_VALUE_SERIALIZER: org.apache.kafka.common.serialization.StringSerializer
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK
-        uses: actions/setup-java@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Simulate Docker build
+        uses: docker/build-push-action@v5
         with:
-          distribution: 'temurin'
-          java-version: '21'
-      - name: Run tests
-        run: mvn test
+          context: .
+          file: ./Dockerfile
+          push: false
+          tags: my-app:ci-test
+      - name: Run container for smoke test
+        run: |
+          docker run -d --name test-app -p 8080:8080 my-app:ci-test
+          sleep 10
+          docker ps
