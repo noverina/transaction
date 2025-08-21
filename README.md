@@ -9,10 +9,8 @@ server.port=8085
 spring.datasource.url=jdbc:sqlite:db.db
 spring.datasource.driver-class-name=org.sqlite.JDBC
 spring.jpa.database-platform=org.hibernate.community.dialect.SQLiteDialect
-spring.datasource.hikari.connection-test-query=SELECT 1
-spring.datasource.hikari.connection-init-sql=PRAGMA foreign_keys = ON
 
-jwt.secret=3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b
+jwt.secret=(omited)
 jwt.expiration=604800
 whitelisted-clients=http://localhost:5173,http://localhost:3000
 
@@ -40,7 +38,7 @@ spring.kafka.producer.value-serializer=org.apache.kafka.common.serialization.Str
 
 ```dto``` HttpResponseDto is an 'universal' wrapper class, every HttpRequest would have this structure. PagedResponseDto is also the same for paged data (it's still wrapped with HttpResponseDto)
 
-```entity``` for more information, please see the wiki page [here](https://github.com/noverina/transaction/wiki/Entity-Modeling-and-Database)
+```entity``` note: the password for dummy users are all `root`. for more information, please see the wiki page [here](https://github.com/noverina/transaction/wiki/Entity-Modeling-and-Database)
 
 ```enums``` enums
 
