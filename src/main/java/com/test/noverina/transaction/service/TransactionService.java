@@ -3,18 +3,24 @@ package com.test.noverina.transaction.service;
 import com.test.noverina.transaction.dto.PagedResponseDto;
 import com.test.noverina.transaction.dto.TransactionListDto;
 import com.test.noverina.transaction.dto.TransactionListViewDto;
+import com.test.noverina.transaction.entity.User;
+import com.test.noverina.transaction.enums.Role;
 import com.test.noverina.transaction.enums.TransactionType;
 import com.test.noverina.transaction.exception.BadLogicException;
+import com.test.noverina.transaction.repository.AccountRepository;
 import com.test.noverina.transaction.repository.TransactionRepository;
 import com.test.noverina.transaction.util.ExchangeRateHelper;
 import org.javamoney.moneta.Money;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.money.MonetaryAmount;
 import java.math.BigDecimal;
+import java.nio.file.AccessDeniedException;
 import java.time.OffsetDateTime;
 import java.time.YearMonth;
 import java.time.ZoneOffset;
@@ -23,12 +29,24 @@ import java.util.List;
 @Service
 public class TransactionService {
     @Autowired
-    private TransactionRepository repo;
+    private TransactionRepository transactionRepo;
+    @Autowired
+    private AccountRepository accountRepo;
     @Autowired
     private ExchangeRateHelper rateHelper;
     public record Totals(String debit, String credit) {}
 
-    public PagedResponseDto<TransactionListViewDto> findAll(String accountId, int month, int year, Integer page, Integer pageSize) {
+    public PagedResponseDto<TransactionListViewDto> findAll(String accountId, int month, int year, Integer page, Integer pageSize) throws AccessDeniedException {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new BadCredentialsException("User not logged in");
+        } else {
+            var currentUser = ((User)auth.getPrincipal());
+            var currentUserId = currentUser.getUserId();
+            var isAdmin = currentUser.getRole() == Role.ADMIN;
+            var accountUser = accountRepo.findById(accountId).orElseThrow().getUser().getUserId();
+            if (!currentUserId.equals(accountUser) && !isAdmin) throw new AccessDeniedException("You do not have access to this account");
+        }
         var pageable = PageRequest.of(page - 1, pageSize, Sort.by("date").descending());
         var filterDate = YearMonth.of(year, month);
         var start = filterDate.atDay(1).atStartOfDay(ZoneOffset.UTC).toOffsetDateTime();
@@ -37,7 +55,7 @@ public class TransactionService {
         }
         var end = filterDate.plusMonths(1).atDay(1).atStartOfDay(ZoneOffset.UTC).toOffsetDateTime();
 
-        var queryResult = repo.findAllByAccountWithinAMonth(accountId, start, end, pageable);
+        var queryResult = transactionRepo.findAllByAccountWithinAMonth(accountId, start, end, pageable);
         var queryList = queryResult.stream().toList();
         var totals = calculateTransaction(queryList);
         var mappedAmount = queryResult.map(dto -> new TransactionListViewDto(

@@ -18,5 +18,4 @@ public class KafkaController {
     public void publish(@RequestParam String message) throws JsonProcessingException {
         publisher.sendMessage(message);
     }
-
 }

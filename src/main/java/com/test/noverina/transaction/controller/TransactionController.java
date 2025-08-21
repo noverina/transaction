@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.nio.file.AccessDeniedException;
+
 @RestController
 @RequestMapping("/transaction")
 public class TransactionController {
@@ -17,8 +19,8 @@ public class TransactionController {
     private TransactionService service;
 
     @GetMapping
-    public ResponseEntity<HttpResponseDto<?>> findAll(@RequestParam String userId, @RequestParam int month, @RequestParam int year, @RequestParam int page, @RequestParam int pageSize)  {
-        var result = service.findAll(userId, month, year, page, pageSize);
+    public ResponseEntity<HttpResponseDto<?>> findAll(@RequestParam String accountId, @RequestParam int month, @RequestParam int year, @RequestParam int page, @RequestParam int pageSize) throws AccessDeniedException {
+        var result = service.findAll(accountId, month, year, page, pageSize);
         var httpRes = new HttpResponseDto<>(false, "", result);
         return new ResponseEntity<>(httpRes, HttpStatus.OK);
     }
