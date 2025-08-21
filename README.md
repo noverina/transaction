@@ -1,5 +1,7 @@
 Swagger can be accessed at (url)/swagger-ui/index.html
 
+I use Github Action for simulated CI/CD, you can click the `Action` or the `green check ✅` for  pipeline result
+
 # How to run
 Min. Java version 21 is needed 
 
