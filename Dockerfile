@@ -1,10 +1,7 @@
 # 1: Build stage
 FROM maven:3.9.5-eclipse-temurin-21 AS build
 WORKDIR /app
-
-# Preload dependencies
 COPY pom.xml .
-RUN mvn dependency:go-offline
 
 # Copy sources and package
 COPY src ./src
