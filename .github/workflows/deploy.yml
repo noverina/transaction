@@ -16,7 +16,6 @@ jobs:
       SPRING_DATASOURCE_URL: jdbc:sqlite:db.db
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.sqlite.JDBC
       SPRING_JPA_DATABASE_PLATFORM: org.hibernate.community.dialect.SQLiteDialect
-      SPRING_DATASOURCE_HIKARI_CONNECTION_TEST_QUERY: SELECT 1
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       JWT_EXPIRATION: 604800
       WHITELISTED_CLIENTS: http://localhost:5173,http://localhost:3000
